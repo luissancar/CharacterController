@@ -26,6 +26,15 @@ public class PlayerController : MonoBehaviour
     public float fallVelocity = 1;
 
 
+    // Caida pendiente
+    public bool isOnSlope = false;
+    private Vector3 hitNormal; // la normal de nuestro jugador
+    public float slideVelocity = 7f;
+    public float slopeForceDown = -4;
+
+
+    // Salto
+    public float jumpForce;
 
     void Start()
     {
@@ -56,7 +65,18 @@ public class PlayerController : MonoBehaviour
 
         // Gravedad
         SetGravity();
+        Saltar();
+
         player.Move(movePlayer * Time.deltaTime);
+    }
+
+    private void Saltar()
+    {
+       if (Input.GetButtonDown("Jump") && player.isGrounded)
+        {
+            fallVelocity = jumpForce;
+            movePlayer.y = fallVelocity;
+        }
     }
 
     private void SetGravity()
@@ -72,6 +92,23 @@ public class PlayerController : MonoBehaviour
             movePlayer.y = fallVelocity;
 
         }
+
+        SlideDown();
+    }
+
+    private void SlideDown()
+    {
+        isOnSlope = Vector3.Angle(Vector3.up, hitNormal) >=
+            player.slopeLimit;
+        if (isOnSlope)
+        {
+            movePlayer.x += ((1f - hitNormal.y) * hitNormal.x) *
+                slideVelocity;
+            movePlayer.z += ((1f - hitNormal.y) * hitNormal.z) *
+                slideVelocity;
+            movePlayer.y += slopeForceDown;
+
+        }
     }
 
     private void camDirection()
@@ -84,5 +121,11 @@ public class PlayerController : MonoBehaviour
 
         camForward= camForward.normalized;
         camRight = camRight.normalized;
+    }
+
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        hitNormal = hit.normal;
     }
 }
