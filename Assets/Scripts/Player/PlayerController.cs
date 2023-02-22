@@ -36,9 +36,14 @@ public class PlayerController : MonoBehaviour
     // Salto
     public float jumpForce;
 
+    // Animaciones
+    public Animator playerAnimatorController;
+
     void Start()
     {
         player = GetComponent<CharacterController>();
+
+        playerAnimatorController = GetComponent<Animator>();
         
     }
 
@@ -54,8 +59,11 @@ public class PlayerController : MonoBehaviour
         verticalMove = Input.GetAxis("Vertical");
         playerInput = new Vector3(horizontalMove,0,verticalMove);
         playerInput =Vector3.ClampMagnitude(playerInput, 1);
-       // player.Move(playerInput*playerSpeed*Time.deltaTime);
+        // player.Move(playerInput*playerSpeed*Time.deltaTime);
 
+
+        playerAnimatorController.SetFloat("PlayerWalkVelocity", 
+            playerInput.magnitude * playerSpeed);
 
         //Movimiento respecto a cámara
         camDirection();
@@ -76,6 +84,8 @@ public class PlayerController : MonoBehaviour
         {
             fallVelocity = jumpForce;
             movePlayer.y = fallVelocity;
+
+            playerAnimatorController.SetTrigger("PlayerJump");
         }
     }
 
@@ -91,7 +101,11 @@ public class PlayerController : MonoBehaviour
             fallVelocity -= gravity * Time.deltaTime;
             movePlayer.y = fallVelocity;
 
+            playerAnimatorController.SetFloat("PlayerVerticalVelocity", player.velocity.y);
+
         }
+
+        playerAnimatorController.SetBool("IsGrounded",player.isGrounded);
 
         SlideDown();
     }
