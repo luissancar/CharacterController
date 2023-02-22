@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlataformController : MonoBehaviour
@@ -57,4 +58,18 @@ public class PlataformController : MonoBehaviour
         yield return new WaitForSeconds(time);
         moveToTheNext = true;
     }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        collision.gameObject.transform.SetParent(transform);
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        collision.gameObject.transform.SetParent(null);
+    }
+
+    
+
 }

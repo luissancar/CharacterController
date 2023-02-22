@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
     // Animaciones
     public Animator playerAnimatorController;
 
+
+    private bool yaEnPlataforma=false;
     void Start()
     {
         player = GetComponent<CharacterController>();
@@ -141,5 +143,28 @@ public class PlayerController : MonoBehaviour
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         hitNormal = hit.normal;
+
+        var scriptMover2 = FindObjectOfType<Mover2>();
+        Debug.Log(hit.gameObject.tag);
+        // Comprueba si la colisión es con un objeto con un tag específico
+        if (hit.gameObject.tag == "Plataforma" && !yaEnPlataforma)
+        {
+            scriptMover2.controlador = player;
+            scriptMover2.enPlataforma = true;
+            // Haz algo cuando colisiona con el objeto
+            Debug.Log("Colisión detectada con MiObjetoTag");
+            yaEnPlataforma= true;
+        }
+        else
+        {
+            if (hit.gameObject.tag != "Plataforma")
+            {
+                scriptMover2.enPlataforma = false;
+                yaEnPlataforma = false;
+            }
+            
+        }
     }
+
+   
 }
